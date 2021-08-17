@@ -10,6 +10,13 @@ import (
 	"github.com/h2non/bimg"
 )
 
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 func main() {
 	var input string
 	var output string
@@ -42,8 +49,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if inputSize.Width != inputSize.Height {
-		log.Fatal("Input image is not a square")
+	minSize := min(inputSize.Width, inputSize.Height)
+
+	squareBuffer, err := bimg.NewImage(inputBuffer).Resize(minSize, minSize)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	err = os.MkdirAll(output, 0755)
@@ -58,7 +68,7 @@ func main() {
 			continue
 		}
 
-		newIcon, err := bimg.NewImage(inputBuffer).Resize(size, size)
+		newIcon, err := bimg.NewImage(squareBuffer).Resize(size, size)
 		if err != nil {
 			log.Fatal(err)
 		}
